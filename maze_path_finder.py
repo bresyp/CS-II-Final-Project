@@ -1,3 +1,4 @@
+
 """
 NAME:Bresy
 
@@ -149,6 +150,7 @@ def solve_maze(maze, row, col, path,solutions):
             print "Solved: Path = {0} ".format(path)
             solutions.append(path)
             print print_maze(maze)
+            return path
         if maze[row][col] == "X":
             return False
         if maze[row][col] == "*":
@@ -228,7 +230,7 @@ def create_maze(maze,win):
                     line = Line(ref_point,Point(width*.05,2*(width*.9/cols)))
                     line.draw(win)
             if cell == "!":
-                circle = Circle(ref_point,.005*width)
+                circle = Circle(ref_point,.01*width)
                 circle.draw(win)
             col += 1
         row += 1
@@ -253,6 +255,41 @@ def create_outline_maze(win):
     bottom_wall.draw(win)
     left_wall = Line(Point(width*.05,width*.05),Point(width*.05, width*.85))
     left_wall.draw(win)
+
+"""
+Description
+Parameter:
+Return:
+Plan
+"""
+def pac_man_points(path):
+    points = []
+    starter_point = Point(width*.025,width*.025)
+    for letter in path:
+        if letter == "R":
+            starter_point = Point(width*.05*2 ,width*.025)
+            points += starter_point
+        if letter == "L":
+            starter_point = Point(width*.05- width .01,width*.025)
+            points += starter_point
+        if letter == "D":
+            starter_point = Point(width*.025,width*.025)
+            points += starter_point
+        if letter == "U":
+            starter_point = Point(width*.025,width*.025)
+            points += starter_point
+    return points
+
+"""
+Description:
+Parameter:
+Return:
+Plan:
+"""
+def pac_man(path):
+    points = pac_man_points(path)
+    for point in points:
+        
     
 """
 Description:
@@ -272,9 +309,9 @@ def main():
         col = 0
         path = ""
         solutions = []
-        solution = solve_maze(maze,row,col,path,solutions)
-        print solution
+        path = solve_maze(maze,row,col,path,solutions)
         create_maze(maze,win)
+        
       
 
     #waits for the user to click the screen
@@ -284,3 +321,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
