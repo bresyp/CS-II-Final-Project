@@ -2,7 +2,7 @@
 """
 NAME:Bresy
 
-ASSIGNMENT #: A4-12
+ASSIGNMENT: Final Project
 
 SUMMARY:
 This program will ask the user for a maze file and try to find a solution
