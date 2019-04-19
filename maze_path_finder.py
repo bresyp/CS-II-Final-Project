@@ -2,7 +2,7 @@
 """
 NAME:Bresy
 
-ASSIGNMENT: Final Project
+ASSIGNMENT #: A4-12
 
 SUMMARY:
 This program will ask the user for a maze file and try to find a solution
@@ -147,10 +147,7 @@ def solve_maze(maze, row, col, path,solutions):
         
         #all the bases cases for the maze
         if  maze[row][col] == "!":
-            print "Solved: Path = {0} ".format(path)
             solutions.append(path)
-            print print_maze(maze)
-            return path
         if maze[row][col] == "X":
             return False
         if maze[row][col] == "*":
@@ -170,9 +167,8 @@ def solve_maze(maze, row, col, path,solutions):
                      maze[row][col] == "O"
             if solve_maze(maze,row-1,col,path+ "U",solutions) == True:
                      maze[row][col] == "O"
-        return True
-    
-    else:
+                     
+        return solutions
         return False
 
 
@@ -192,8 +188,8 @@ def shortest_path(solutions):
     for path in solutions:
        if len(path) < min_len:
            min_len = len(path)
-           shortest = ""
-       return shortest
+           shortest = path
+    return shortest
     
 """
 Description: create the graphics maze
@@ -213,28 +209,33 @@ The ! will be drawn as a big white ball
 
 def create_maze(maze,win):
     width = win.getWidth()
-    create_outline_maze(win)    
+    #create_outline_maze(win)    
     #how many numbers are in each row will tell the number of columns
     #used 0 bc there will always be at least on "mini"list
-    cols = len(maze[0])-1
-    row = 0
-    col = 0
+    cols = len(maze[0])
+    x = 0
+    y = width
+    ref_point = Point(x,y)
     
-    ref_point = Point(width*.05, width*.85)
     for rows in maze:
         for cell in rows:
             if cell == "O":
-             ref_point = Point(width*.05, (width*.9)/cols)
+                x += width/cols
+                
             if cell == "X":
-               if maze[row][col] == "X":
-                    line = Line(ref_point,Point(width*.05,2*(width*.9/cols)))
-                    line.draw(win)
+                wall = Rectangle(Point(x-width/cols/10,y+width/cols/2),\
+                                 Point(x+width/cols/100,y-width/cols/2))
+                wall.setFill("black")
+                wall.draw(win)
+                
             if cell == "!":
-                circle = Circle(ref_point,.01*width)
+                x += width/cols
+                circle = Circle(Point(x,y),width/(cols*10))
                 circle.draw(win)
-            col += 1
-        row += 1
-                 
+                
+        y -= width/cols
+        x = 0
+    
 """
 Description: creates all the walls for the maze
 Parameter:
@@ -256,40 +257,44 @@ def create_outline_maze(win):
     left_wall = Line(Point(width*.05,width*.05),Point(width*.05, width*.85))
     left_wall.draw(win)
 
+
 """
 Description
 Parameter:
 Return:
-Plan
+Plan"""
 """
-def pac_man_points(path):
+def pac_man_points(path,win):
     points = []
+    width = win.getWidth()
     starter_point = Point(width*.025,width*.025)
     for letter in path:
         if letter == "R":
             starter_point = Point(width*.05*2 ,width*.025)
-            points += starter_point
+            points.append(starter_point)
         if letter == "L":
-            starter_point = Point(width*.05- width .01,width*.025)
-            points += starter_point
+            starter_point = Point(width*.05- width *.01,width*.025)
+            points.append(starter_point)
         if letter == "D":
             starter_point = Point(width*.025,width*.025)
-            points += starter_point
+            points.append(starter_point)
         if letter == "U":
             starter_point = Point(width*.025,width*.025)
-            points += starter_point
+            points.append(starter_point)
     return points
+
+"""
 
 """
 Description:
 Parameter:
 Return:
 Plan:
-"""
+
 def pac_man(path):
     points = pac_man_points(path)
     for point in points:
-        
+"""        
     
 """
 Description:
@@ -309,8 +314,14 @@ def main():
         col = 0
         path = ""
         solutions = []
-        path = solve_maze(maze,row,col,path,solutions)
         create_maze(maze,win)
+        solutions = solve_maze(maze,row,col,path,solutions)
+        path = shortest_path(solutions)
+        print path
+        #points = pac_man_points(path,win)
+        #print points
+        #pac_man(points)
+        
         
       
 
