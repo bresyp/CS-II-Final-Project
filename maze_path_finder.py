@@ -209,7 +209,7 @@ The ! will be drawn as a big white ball
 
 def create_maze(maze,win):
     width = win.getWidth()
-    #create_outline_maze(win)    
+    create_outline_maze(win)    
     #how many numbers are in each row will tell the number of columns
     #used 0 bc there will always be at least on "mini"list
     cols = len(maze[0])
@@ -248,42 +248,60 @@ Plan:
 """
 def create_outline_maze(win):
     width = win.getWidth()
-    top_wall = Line(Point(width*.05,width*.95),Point(width*.95,width*.95))
+    enter = Rectangle(Point(0,width*.90),Point(width*.1,width*.91))
+    enter.setFill("black")
+    enter.draw(win)
+    top_wall = Line(Point(width*.01,width),Point(width,width))
     top_wall.draw(win)
-    right_wall = Line(Point(width*.95,width*.95),Point(width*.95,width*.05))
+    right_wall = Line(Point(width,width),Point(width,width*.01))
     right_wall.draw(win)
-    bottom_wall = Line(Point(width*.95,width*.05), Point(width*.05,width*.05))
+    bottom_wall = Line(Point(width*.01,width), Point(width*.01,width*.01))
     bottom_wall.draw(win)
-    left_wall = Line(Point(width*.05,width*.05),Point(width*.05, width*.85))
+    left_wall = Line(Point(width*.01,width*.01),Point(width*.01, width*.3))
     left_wall.draw(win)
 
 
 """
-Description
+Description:
+    will find all the points for the pac man
 Parameter:
+    path - path the pacman must follow
+    win - window that it will be drawn in
+    num_cols - number of columns in the maze
 Return:
-Plan"""
+    points - a list of points the pacman must follow
+Plan:
 """
-def pac_man_points(path,win):
-    points = []
+
+def pac_man_points(path,win,num_cols):
     width = win.getWidth()
-    starter_point = Point(width*.025,width*.025)
+    x = 0
+    y = width
+    points = []
+    
     for letter in path:
         if letter == "R":
-            starter_point = Point(width*.05*2 ,width*.025)
-            points.append(starter_point)
+            x += width/num_cols
+            point = Point(x,y)
+            points.append(point)
+            
         if letter == "L":
-            starter_point = Point(width*.05- width *.01,width*.025)
-            points.append(starter_point)
+            x -= width/num_cols
+            point = Point(x,y)
+            points.append(point)
+            
         if letter == "D":
-            starter_point = Point(width*.025,width*.025)
-            points.append(starter_point)
+            y -= width/num_cols
+            point = Point(x,y)
+            points.append(point)
+            
         if letter == "U":
-            starter_point = Point(width*.025,width*.025)
-            points.append(starter_point)
+            y += width/num_cols
+            point = Point(x,y)
+            points.append(point)
+            
     return points
 
-"""
 
 """
 Description:
@@ -312,19 +330,22 @@ def main():
     if True == is_valid_maze(maze):
         row = 0
         col = 0
+        num_cols = cols = len(maze[0])
         path = ""
         solutions = []
+        
         create_maze(maze,win)
+        
         solutions = solve_maze(maze,row,col,path,solutions)
         path = shortest_path(solutions)
         print path
-        #points = pac_man_points(path,win)
-        #print points
+        
+        points = pac_man_points(path,win,num_cols)
+        print points
+        
         #pac_man(points)
         
         
-      
-
     #waits for the user to click the screen
     win.getMouse()
     #closes the window
@@ -332,4 +353,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
