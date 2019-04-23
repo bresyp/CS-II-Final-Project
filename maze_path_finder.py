@@ -147,10 +147,7 @@ def solve_maze(maze, row, col, path,solutions):
         
         #all the bases cases for the maze
         if  maze[row][col] == "!":
-            print "Solved: Path = {0} ".format(path)
             solutions.append(path)
-            print print_maze(maze)
-            return path
         if maze[row][col] == "X":
             return False
         if maze[row][col] == "*":
@@ -170,9 +167,8 @@ def solve_maze(maze, row, col, path,solutions):
                      maze[row][col] == "O"
             if solve_maze(maze,row-1,col,path+ "U",solutions) == True:
                      maze[row][col] == "O"
-        return True
-    
-    else:
+                     
+        return solutions
         return False
 
 
@@ -192,8 +188,8 @@ def shortest_path(solutions):
     for path in solutions:
        if len(path) < min_len:
            min_len = len(path)
-           shortest = ""
-       return shortest
+           shortest = path
+    return shortest
     
 """
 Description: create the graphics maze
@@ -216,25 +212,31 @@ def create_maze(maze,win):
     create_outline_maze(win)    
     #how many numbers are in each row will tell the number of columns
     #used 0 bc there will always be at least on "mini"list
-    cols = len(maze[0])-1
-    row = 0
-    col = 0
+    cols = len(maze[0])
+    x = width*.02
+    y = width*.95
+    ref_point = Point(x,y)
     
-    ref_point = Point(width*.05, width*.85)
     for rows in maze:
         for cell in rows:
             if cell == "O":
-             ref_point = Point(width*.05, (width*.9)/cols)
+                x += width/cols
+                
             if cell == "X":
-               if maze[row][col] == "X":
-                    line = Line(ref_point,Point(width*.05,2*(width*.9/cols)))
-                    line.draw(win)
+                wall = Rectangle(Point(x-width/cols/10,y+width/cols/2),\
+                                 Point(x+width/cols/100,y-width/cols/2))
+                wall.setFill("black")
+                wall.draw(win)
+                
             if cell == "!":
-                circle = Circle(ref_point,.01*width)
+                x += width/cols
+                circle = Circle(Point(x,y),width/(cols*10))
+                circle.setFill("red")
                 circle.draw(win)
-            col += 1
-        row += 1
-                 
+                
+        y -= width/cols
+        x = 0
+    
 """
 Description: creates all the walls for the maze
 Parameter:
@@ -247,38 +249,68 @@ Plan:
 """
 def create_outline_maze(win):
     width = win.getWidth()
-    top_wall = Line(Point(width*.05,width*.95),Point(width*.95,width*.95))
+    enter = Rectangle(Point(0,width*.90),Point(width*.1,width*.91))
+    enter.setFill("black")
+    enter.draw(win)
+    
+    top_wall = Rectangle(Point(width*.01,width),Point(width,width))
+    top_wall.setFill("black")
     top_wall.draw(win)
-    right_wall = Line(Point(width*.95,width*.95),Point(width*.95,width*.05))
+    
+    right_wall = Rectangle(Point(width,width),Point(width,width*.1))
+    right_wall.setFill("black")
     right_wall.draw(win)
-    bottom_wall = Line(Point(width*.95,width*.05), Point(width*.05,width*.05))
+    
+    bottom_wall = Rectangle(Point(width*.01,width), Point(width*.01,width*.01))
+    bottom_wall.setFill("black")
     bottom_wall.draw(win)
-    left_wall = Line(Point(width*.05,width*.05),Point(width*.05, width*.85))
+    
+    left_wall = Rectangle(Point(width*.01,width*.01),Point(width*.01, width*.01))
+    left_wall.setFill("black")
     left_wall.draw(win)
 
+
 """
-Description
+Description:
+    will find all the points for the pac man
 Parameter:
+    path - path the pacman must follow
+    win - window that it will be drawn in
+    num_cols - number of columns in the maze
 Return:
-Plan
+    points - a list of points the pacman must follow
+Plan:
 """
-def pac_man_points(path):
+
+def pac_man_points(path,win,num_cols):
+    width = win.getWidth()
+    x = width*.02
+    y = width*.95
     points = []
-    starter_point = Point(width*.025,width*.025)
+    
     for letter in path:
         if letter == "R":
-            starter_point = Point(width*.05*2 ,width*.025)
-            points += starter_point
+            x += width/num_cols
+            point = Point(x,y)
+            points.append(point)
+            
         if letter == "L":
-            starter_point = Point(width*.05- width .01,width*.025)
-            points += starter_point
+            x -= width/num_cols
+            point = Point(x,y)
+            points.append(point)
+            
         if letter == "D":
-            starter_point = Point(width*.025,width*.025)
-            points += starter_point
+            y -= width/num_cols
+            point = Point(x,y)
+            points.append(point)
+            
         if letter == "U":
-            starter_point = Point(width*.025,width*.025)
-            points += starter_point
+            y += width/num_cols
+            point = Point(x,y)
+            points.append(point)
+            
     return points
+
 
 """
 Description:
@@ -286,11 +318,19 @@ Parameter:
 Return:
 Plan:
 """
-def pac_man(path):
-    points = pac_man_points(path)
+def pac_man(path,win,num_cols):
+    points = pac_man_points(path,win,num_cols)
     for point in points:
-        
+        path_points =  Circle(point, win.getWidth()*.01)
+        path_points.setFill("white")
+        path_points.draw(win)
+        pac_man = Circle(point, win.getWidth()*.04)
+        pac_man.setFill("yellow")
+        pac_man.draw(win)
+        time.sleep(1)
+        pac_man.undraw()
     
+   
 """
 Description:
 Parameter:
@@ -307,13 +347,19 @@ def main():
     if True == is_valid_maze(maze):
         row = 0
         col = 0
+        num_cols = cols = len(maze[0])
         path = ""
         solutions = []
-        path = solve_maze(maze,row,col,path,solutions)
+        
         create_maze(maze,win)
         
-      
-
+        solutions = solve_maze(maze,row,col,path,solutions)
+        path = shortest_path(solutions)
+        
+        points = pac_man_points(path,win,num_cols)
+        pac_man(path,win,num_cols)
+        
+        
     #waits for the user to click the screen
     win.getMouse()
     #closes the window
