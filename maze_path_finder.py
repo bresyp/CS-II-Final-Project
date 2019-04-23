@@ -1,4 +1,3 @@
-
 """
 NAME:Bresy
 
@@ -213,8 +212,8 @@ def create_maze(maze,win):
     #how many numbers are in each row will tell the number of columns
     #used 0 bc there will always be at least on "mini"list
     cols = len(maze[0])
-    x = 0
-    y = width
+    x = width*.02
+    y = width*.95
     ref_point = Point(x,y)
     
     for rows in maze:
@@ -231,6 +230,7 @@ def create_maze(maze,win):
             if cell == "!":
                 x += width/cols
                 circle = Circle(Point(x,y),width/(cols*10))
+                circle.setFill("red")
                 circle.draw(win)
                 
         y -= width/cols
@@ -251,13 +251,21 @@ def create_outline_maze(win):
     enter = Rectangle(Point(0,width*.90),Point(width*.1,width*.91))
     enter.setFill("black")
     enter.draw(win)
-    top_wall = Line(Point(width*.01,width),Point(width,width))
+    
+    top_wall = Rectangle(Point(width*.01,width),Point(width,width))
+    top_wall.setFill("black")
     top_wall.draw(win)
-    right_wall = Line(Point(width,width),Point(width,width*.01))
+    
+    right_wall = Rectangle(Point(width,width),Point(width,width*.1))
+    right_wall.setFill("black")
     right_wall.draw(win)
-    bottom_wall = Line(Point(width*.01,width), Point(width*.01,width*.01))
+    
+    bottom_wall = Rectangle(Point(width*.01,width), Point(width*.01,width*.01))
+    bottom_wall.setFill("black")
     bottom_wall.draw(win)
-    left_wall = Line(Point(width*.01,width*.01),Point(width*.01, width*.3))
+    
+    left_wall = Rectangle(Point(width*.01,width*.01),Point(width*.01, width*.01))
+    left_wall.setFill("black")
     left_wall.draw(win)
 
 
@@ -275,8 +283,8 @@ Plan:
 
 def pac_man_points(path,win,num_cols):
     width = win.getWidth()
-    x = 0
-    y = width
+    x = width*.02
+    y = width*.95
     points = []
     
     for letter in path:
@@ -308,12 +316,20 @@ Description:
 Parameter:
 Return:
 Plan:
-
-def pac_man(path):
-    points = pac_man_points(path)
+"""
+def pac_man(path,win,num_cols):
+    points = pac_man_points(path,win,num_cols)
     for point in points:
-"""        
+        path_points =  Circle(point, win.getWidth()*.01)
+        path_points.setFill("white")
+        path_points.draw(win)
+        pac_man = Circle(point, win.getWidth()*.04)
+        pac_man.setFill("yellow")
+        pac_man.draw(win)
+        time.sleep(1)
+        pac_man.undraw()
     
+   
 """
 Description:
 Parameter:
@@ -338,12 +354,9 @@ def main():
         
         solutions = solve_maze(maze,row,col,path,solutions)
         path = shortest_path(solutions)
-        print path
         
         points = pac_man_points(path,win,num_cols)
-        print points
-        
-        #pac_man(points)
+        pac_man(path,win,num_cols)
         
         
     #waits for the user to click the screen
@@ -353,5 +366,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
