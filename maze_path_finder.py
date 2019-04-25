@@ -208,23 +208,28 @@ The ! will be drawn as a big white ball
 
 def create_maze(maze,win):
     width = win.getWidth()
+    win.setBackground("black")
     create_outline_maze(win)    
     #how many numbers are in each row will tell the number of columns
     #used 0 bc there will always be at least on "mini"list
     cols = len(maze[0])
-    x = width*.02
-    y = width*.95
+    x = width*.03
+    y = width*.9
     ref_point = Point(x,y)
-    
+
+    #gets each cell in the maze
+    #decides what to do according to whats in the cell
     for rows in maze:
         for cell in rows:
             if cell == "O":
                 x += width/cols
                 
             if cell == "X":
-                wall = Rectangle(Point(x-width/cols/10,y+width/cols/2),\
-                                 Point(x+width/cols/100,y-width/cols/2))
+                wall = Rectangle(Point(x-width/cols/10.0,y+width/cols/2.0),\
+                                 Point(x+width/cols/100.0,y-width/cols/2.0))
+                x += width*.05
                 wall.setFill("black")
+                wall.setOutline("blue")
                 wall.draw(win)
                 
             if cell == "!":
@@ -249,23 +254,27 @@ Plan:
 def create_outline_maze(win):
     width = win.getWidth()
     enter = Rectangle(Point(0,width*.90),Point(width*.1,width*.91))
-    enter.setFill("black")
+    enter.setFill("white")
     enter.draw(win)
     
-    top_wall = Rectangle(Point(width*.01,width),Point(width,width))
-    top_wall.setFill("black")
+    top_wall = Rectangle(Point(width*.01,width),Point(width,width*.99))
+    top_wall.setFill("white")
+    top_wall.setOutline("white")
     top_wall.draw(win)
     
-    right_wall = Rectangle(Point(width,width),Point(width,width*.1))
-    right_wall.setFill("black")
+    right_wall = Rectangle(Point(width,width),Point(width*.99,width*.01))
+    right_wall.setFill("white")
+    right_wall.setOutline("white")
     right_wall.draw(win)
     
-    bottom_wall = Rectangle(Point(width*.01,width), Point(width*.01,width*.01))
-    bottom_wall.setFill("black")
+    bottom_wall = Rectangle(Point(width,0), Point(0,width*.01))
+    bottom_wall.setFill("white")
+    bottom_wall.setOutline("white")
     bottom_wall.draw(win)
     
-    left_wall = Rectangle(Point(width*.01,width*.01),Point(width*.01, width*.01))
-    left_wall.setFill("black")
+    left_wall = Rectangle(Point(0,0),Point(width*.01, width*.9))
+    left_wall.setFill("white")
+    left_wall.setOutline("white")
     left_wall.draw(win)
 
 
@@ -283,8 +292,8 @@ Plan:
 
 def pac_man_points(path,win,num_cols):
     width = win.getWidth()
-    x = width*.02
-    y = width*.95
+    x = width*.05
+    y = width*.9
     points = []
     
     for letter in path:
