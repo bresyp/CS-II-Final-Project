@@ -1,11 +1,12 @@
 """
 NAME:Bresy
 
-ASSIGNMENT #: A4-12
+ASSIGNMENT: Final Project
 
 SUMMARY:
 This program will ask the user for a maze file and try to find a solution
-for the maze.
+for the maze.It will use graphics to create the maze and animate the
+solution
 
 A maze is represented in a .txt file using the following symbols:
     X - wall
@@ -182,9 +183,11 @@ I will loop through the list of solutions and then check which has the shortest
 length and return that solution
 """
 def shortest_path(solutions):
-    min_len = 100
+    #used big unrealistic number
+    min_len = 1000
     shortest = ""
     for path in solutions:
+        #checks to see if path is shorter
        if len(path) < min_len:
            min_len = len(path)
            shortest = path
@@ -211,10 +214,12 @@ def create_maze(maze,win):
     win.setBackground("black")
     create_outline_maze(win)    
     #how many numbers are in each row will tell the number of columns
-    #used 0 bc there will always be at least on "mini"list
+    #used 0 bc there will always be at least one "mini"list
     cols = len(maze[0])
+    #wall took up other parameter so adjusted coordinates
     x = width*.03
     y = width*.9
+    #starting coordinate for animation
     ref_point = Point(x,y)
 
     #gets each cell in the maze
@@ -222,11 +227,14 @@ def create_maze(maze,win):
     for rows in maze:
         for cell in rows:
             if cell == "O":
+                #moves the x axis because loop getting the cell on right
                 x += width/cols
                 
             if cell == "X":
+                #makes specialized coordiantes for each x
                 wall = Rectangle(Point(x-width/cols/10.0,y+width/cols/2.0),\
                                  Point(x+width/cols/100.0,y-width/cols/2.0))
+                #move wall to the right because the next x to the right
                 x += width*.05
                 wall.setFill("black")
                 wall.setOutline("blue")
@@ -238,7 +246,9 @@ def create_maze(maze,win):
                 circle.setFill("red")
                 circle.draw(win)
                 
+        #next list will be under the last so y axis change
         y -= width/cols
+        #reset zero because it is under not to the side 
         x = 0
     
 """
@@ -253,6 +263,7 @@ Plan:
 """
 def create_outline_maze(win):
     width = win.getWidth()
+    #makes special coordiantes that are specialized for the win size
     enter = Rectangle(Point(0,width*.90),Point(width*.1,width*.91))
     enter.setFill("white")
     enter.draw(win)
@@ -288,43 +299,60 @@ Parameter:
 Return:
     points - a list of points the pacman must follow
 Plan:
+I will take the path and make a point depending on
+the letter in the list. I will add the point to a
+list and return the list of points
 """
 
 def pac_man_points(path,win,num_cols):
     width = win.getWidth()
+    #where the animation will start on the win
     x = width*.05
     y = width*.9
     points = []
     
     for letter in path:
         if letter == "R":
+            #changes the x to the right
             x += width/num_cols
             point = Point(x,y)
             points.append(point)
             
         if letter == "L":
+            #changes the x to the left
             x -= width/num_cols
             point = Point(x,y)
             points.append(point)
             
         if letter == "D":
+            #changes the y to go down 
             y -= width/num_cols
             point = Point(x,y)
             points.append(point)
             
         if letter == "U":
+            #changes the y to go up 
             y += width/num_cols
             point = Point(x,y)
             points.append(point)
-            
+        
     return points
 
 
 """
-Description:
+Description: 
+    Will create a pac man figure
 Parameter:
+    path - the solution for the maze
+    win - window everything will be drawn in
+    nums_cols - the number of columns in the maze 
 Return:
+    none
 Plan:
+ Will create the pac man figure using a loop. The
+ loop will go through the list of path poitns. The
+ points will be used to generate the pac man in a 
+ new spot each time
 """
 def pac_man(path,win,num_cols):
     points = pac_man_points(path,win,num_cols)
@@ -341,9 +369,13 @@ def pac_man(path,win,num_cols):
    
 """
 Description:
+    Call all the methods
 Parameter:
+    none
 Return:
+    none
 Plan:
+    set up the window and call all the methods
 """
 def main():
     win = GraphWin("Circle Example", 600, 600)
@@ -353,6 +385,7 @@ def main():
  
                 
     if True == is_valid_maze(maze):
+        #need for future methods
         row = 0
         col = 0
         num_cols = cols = len(maze[0])
